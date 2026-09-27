@@ -1,6 +1,6 @@
 // ---- Config ----
 // Point this at your running FastAPI server.
-const API_URL = "https://nightstay-a-room-type-predictor-for-nyc.onrender.com";
+const API_URL = "http://127.0.0.1:8000/predict";
 
 // Rough NYC bounding box, used only to place the glowing pin on the grid.
 const NYC_BOUNDS = { latMin: 40.49, latMax: 40.92, lonMin: -74.26, lonMax: -73.68 };
