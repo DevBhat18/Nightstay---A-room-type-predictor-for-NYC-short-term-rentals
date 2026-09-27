@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightstay · Room Type Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <span>Nightstay</span>
+  </div>
+  <p class="topbar-note">A room-type predictor for NYC short-term rentals</p>
+</header>
+
+<main class="layout">
+
+  <!-- LEFT: intro + form -->
+  <section class="panel form-panel">
+    <div class="intro">
+      <h1>What kind of stay<br>is this listing?</h1>
+      <p class="lede">Enter a listing's details below. The model reads location, price and host behavior to guess whether guests get the whole place, a private room, or a shared one.</p>
+    </div>
+
+    <form id="predict-form" novalidate>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="latitude">Latitude</label>
+          <input type="number" id="latitude" step="any" placeholder="40.7128" required>
+        </div>
+        <div class="field">
+          <label for="longitude">Longitude</label>
+          <input type="number" id="longitude" step="any" placeholder="-74.0060" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="neighbourhood_group">Borough</label>
+          <select id="neighbourhood_group" required>
+            <option value="" disabled selected>Select borough</option>
+            <option>Manhattan</option>
+            <option>Brooklyn</option>
+            <option>Queens</option>
+            <option>Bronx</option>
+            <option>Staten Island</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="neighbourhood">Neighbourhood</label>
+          <input type="text" id="neighbourhood" placeholder="Williamsburg" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="price">Price <span>per night, $</span></label>
+          <input type="number" id="price" min="1" step="1" placeholder="150" required>
+        </div>
+        <div class="field">
+          <label for="minimum_nights">Minimum nights</label>
+          <input type="number" id="minimum_nights" min="1" max="365" step="1" placeholder="2" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="number_of_reviews">Reviews <span>total</span></label>
+          <input type="number" id="number_of_reviews" min="0" step="1" placeholder="24" required>
+        </div>
+        <div class="field">
+          <label for="reviews_per_month">Reviews <span>per month</span></label>
+          <input type="number" id="reviews_per_month" min="0" step="0.01" placeholder="1.2" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="calculated_host_listings_count">Host's other listings</label>
+          <input type="number" id="calculated_host_listings_count" min="0" step="1" placeholder="3" required>
+        </div>
+        <div class="field">
+          <label for="availability_365">Available days <span>/ 365</span></label>
+          <input type="number" id="availability_365" min="0" max="365" step="1" placeholder="180" required>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn">
+        <span class="btn-label">Predict room type</span>
+        <span class="btn-spinner" aria-hidden="true"></span>
+      </button>
+
+      <p id="error-msg" class="error-msg" hidden></p>
+    </form>
+  </section>
+
+  <!-- RIGHT: map + result -->
+  <section class="panel result-panel">
+
+    <div class="map-card">
+      <canvas id="map-grid" width="520" height="360" aria-hidden="true"></canvas>
+      <div class="pin" id="pin">
+        <span class="pin-pulse"></span>
+        <span class="pin-dot"></span>
+      </div>
+      <div class="map-caption">
+        <span id="coord-readout">40.7300, -73.9950</span>
+        <span class="map-caption-sub">approximate position, NYC bounds</span>
+      </div>
+    </div>
+
+    <div class="result-card" id="result-card">
+      <div class="result-empty" id="result-empty">
+        <p>Fill in the details and run a prediction — results land here.</p>
+      </div>
+
+      <div class="result-filled" id="result-filled" hidden>
+        <p class="result-eyebrow">Most likely</p>
+        <h2 id="result-label">—</h2>
+
+        <div class="bars" id="bars">
+          <div class="bar-row" data-room="Entire home/apt">
+            <span class="bar-name">Entire home/apt</span>
+            <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-pct">0%</span>
+          </div>
+          <div class="bar-row" data-room="Private room">
+            <span class="bar-name">Private room</span>
+            <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-pct">0%</span>
+          </div>
+          <div class="bar-row" data-room="Shared room">
+            <span class="bar-name">Shared room</span>
+            <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-pct">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Predictions come from a trained classifier — treat them as an estimate, not a listing guarantee.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
